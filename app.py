@@ -62,6 +62,7 @@ st_slope = st.selectbox(
 st.divider()
 
 # ---------------- PREDICTION ----------------
+# ---------------- PREDICTION ----------------
 if st.button("🔍 Predict Heart Disease Risk", use_container_width=True):
 
     raw_input = {
@@ -85,26 +86,30 @@ if st.button("🔍 Predict Heart Disease Risk", use_container_width=True):
         if col not in input_df.columns:
             input_df[col] = 0
 
-    # Arrange columns exactly as expected by the model
+    # Arrange columns
     input_df = input_df[expected_columns]
 
     # Scale input
     scaled_input = scaler.transform(input_df)
 
-    # Prediction
+    # Make prediction
     prediction = model.predict(scaled_input)[0]
+
+    # Get probability
+    probability = model.predict_proba(scaled_input)[0][1]
 
     # ---------------- RESULT ----------------
     st.subheader("Prediction Result")
 
     if prediction == 1:
-        st.error(
-            "⚠️ High Risk of Heart Disease"
-        )
+        st.error("⚠️ High Risk of Heart Disease")
     else:
-        st.success(
-            "✅ Low Risk of Heart Disease"
-        )
+        st.success("✅ Low Risk of Heart Disease")
+
+    st.metric(
+        "Heart Disease Risk Probability",
+        f"{probability * 100:.1f}%"
+    )
 
     st.caption(
         "⚠️ This prediction is for educational purposes only "
